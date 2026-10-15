@@ -1,0 +1,733 @@
+<title>Tablero Carne de Res</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: fondo con manchas de color (navy, verde, menta, oro) bajo paneles de vidrio esmerilado.
+   Cabecera de vidrio con filtros → pestañas en píldora → vista: resumen arriba, detalle abajo. */
+:root{
+  --navy:#13294B; --navy-2:#24508C; --green:#1E7A52; --gold:#B8890F; --gold-2:#C99A1A; --mint:#7FD4B8;
+  --bg:#E8EFEE; --blob1:rgba(30,122,82,.20); --blob2:rgba(19,41,75,.18); --blob3:rgba(201,154,26,.16); --blob4:rgba(127,212,184,.34);
+  --glass:rgba(255,255,255,.64); --glass-2:rgba(255,255,255,.44); --glass-line:rgba(255,255,255,.85); --edge:rgba(19,41,75,.10);
+  --shadow:0 10px 30px rgba(19,41,75,.08), 0 1px 2px rgba(19,41,75,.06);
+  --row:rgba(19,41,75,.07); --row-h:rgba(255,255,255,.55);
+  --fg:#12201C; --fg-2:#45554F; --fg-3:#6F7F79; --on-hl:#FFFFFF; --on-hl-2:#C9D8F0;
+  --hl-a:#13294B; --hl-b:#2A5A9A; --sel-bg:#13294B;
+  --good:#17704A; --good-bg:rgba(30,122,82,.13); --warn:#8A5F00; --warn-bg:rgba(201,154,26,.18); --crit:#A8231C; --crit-bg:rgba(179,38,30,.11);
+  --s1:#2F6DB5; --s2:#C99A1A; --s3:#1E9A64; --s4:#8467C9; --s5:#38B8C9; --sm:#9AA6A2; --sm2:#5F6E69;
+  --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-num:Verdana,Geneva,"DejaVu Sans",sans-serif;
+  --r:14px; --r-s:9px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --navy:#0E1E36; --navy-2:#2A5A9A; --green:#3DB07C; --gold:#E0B84A; --gold-2:#D9B13A; --mint:#7FD4B8;
+  --bg:#09131F; --blob1:rgba(61,176,124,.20); --blob2:rgba(42,90,154,.30); --blob3:rgba(217,177,58,.12); --blob4:rgba(127,212,184,.14);
+  --glass:rgba(22,36,58,.60); --glass-2:rgba(22,36,58,.40); --glass-line:rgba(255,255,255,.09); --edge:rgba(0,0,0,.35);
+  --shadow:0 10px 30px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.3);
+  --row:rgba(255,255,255,.07); --row-h:rgba(255,255,255,.05);
+  --fg:#E7EEF0; --fg-2:#AEBDC4; --fg-3:#7F909A; --on-hl:#FFFFFF; --on-hl-2:#BCD0EE;
+  --hl-a:#1A3A66; --hl-b:#2F64AA; --sel-bg:#2F64AA;
+  --good:#5BC793; --good-bg:rgba(91,199,147,.14); --warn:#E3B54A; --warn-bg:rgba(227,181,74,.15); --crit:#F08A80; --crit-bg:rgba(240,138,128,.14);
+  --s1:#4D86D1; --s2:#B5891C; --s3:#1F9563; --s4:#8F78D8; --s5:#2A9DB0; --sm:#6E7D86; --sm2:#46535B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --navy:#0E1E36; --navy-2:#2A5A9A; --green:#3DB07C; --gold:#E0B84A; --gold-2:#D9B13A; --mint:#7FD4B8;
+  --bg:#09131F; --blob1:rgba(61,176,124,.20); --blob2:rgba(42,90,154,.30); --blob3:rgba(217,177,58,.12); --blob4:rgba(127,212,184,.14);
+  --glass:rgba(22,36,58,.60); --glass-2:rgba(22,36,58,.40); --glass-line:rgba(255,255,255,.09); --edge:rgba(0,0,0,.35);
+  --shadow:0 10px 30px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.3);
+  --row:rgba(255,255,255,.07); --row-h:rgba(255,255,255,.05);
+  --fg:#E7EEF0; --fg-2:#AEBDC4; --fg-3:#7F909A; --on-hl:#FFFFFF; --on-hl-2:#BCD0EE;
+  --hl-a:#1A3A66; --hl-b:#2F64AA; --sel-bg:#2F64AA;
+  --good:#5BC793; --good-bg:rgba(91,199,147,.14); --warn:#E3B54A; --warn-bg:rgba(227,181,74,.15); --crit:#F08A80; --crit-bg:rgba(240,138,128,.14);
+  --s1:#4D86D1; --s2:#B5891C; --s3:#1F9563; --s4:#8F78D8; --s5:#2A9DB0; --sm:#6E7D86; --sm2:#46535B; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);min-height:100vh;position:relative}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(38rem 30rem at 8% 0%,var(--blob4),transparent 70%),radial-gradient(34rem 28rem at 95% 8%,var(--blob2),transparent 70%),
+             radial-gradient(30rem 26rem at 70% 75%,var(--blob1),transparent 70%),radial-gradient(28rem 22rem at 12% 90%,var(--blob3),transparent 70%),var(--bg)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num,td.n{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:.86em}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);border:1px solid var(--glass-line);box-shadow:var(--shadow);border-radius:var(--r)}
+
+/* Cabecera */
+header .wrap{padding-block:18px 10px}
+.hdr{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 24px;padding:16px 20px}
+.brand{display:flex;flex-direction:column;gap:3px;margin-right:auto;min-width:0}
+.brand small{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3);font-weight:600}
+.brand h1{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;color:var(--fg)}
+.brand h1 em{font-style:normal;color:var(--gold)}
+.flt{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.flt label{display:flex;flex-direction:column;gap:3px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);font-weight:700}
+.sel{background:var(--glass-2);border:1px solid var(--glass-line);box-shadow:inset 0 0 0 1px var(--edge);border-radius:999px;padding:7px 14px;min-width:160px;max-width:100%;font-weight:600;font-size:.88rem}
+.chip{display:inline-flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:.8rem;color:var(--fg-2);background:var(--glass-2);border:1px solid var(--glass-line);box-shadow:inset 0 0 0 1px var(--edge);border-radius:999px;padding:6px 12px}
+.chip b{color:var(--fg);font-family:var(--f-num);font-size:.92em}
+
+/* Pestañas */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:6px}
+.tabs .bar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:5px;border-radius:999px}
+.tab{appearance:none;border:0;background:none;padding:8px 14px;border-radius:999px;font-family:var(--f-display);font-weight:600;font-size:.85rem;color:var(--fg-2);white-space:nowrap;cursor:pointer}
+.tab:hover{color:var(--fg);background:var(--row-h)}
+.tab[aria-selected="true"]{background:var(--sel-bg);color:#fff;box-shadow:0 4px 12px rgba(19,41,75,.25)}
+main .wrap{padding-block:12px 48px;display:flex;flex-direction:column;gap:22px}
+
+/* Secciones */
+.sec{display:flex;flex-direction:column;gap:10px;min-width:0}
+.sec-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.sec-h h2{font-size:1.08rem;font-weight:700}
+.sec-h p{margin:0;color:var(--fg-3);font-size:.85rem}
+.pad{padding:16px 18px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:18px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,185px),1fr));gap:12px}
+.kpi{padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .lb{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);font-weight:700}
+.kpi .v{font-family:var(--f-num);font-size:1.5rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--fg);line-height:1.2}
+.kpi .sb{font-size:.8rem;color:var(--fg-2);line-height:1.4}
+.kpi .sb .num{font-size:.94em}
+.kpi.hl{background:linear-gradient(135deg,var(--hl-a),var(--hl-b));border-color:transparent;color:var(--on-hl)}
+.kpi.hl .lb,.kpi.hl .sb{color:var(--on-hl-2)} .kpi.hl .v{color:var(--on-hl)}
+.v.good{color:var(--good)} .v.bad{color:var(--crit)}
+
+/* Tablas */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{font-weight:700;text-align:left;color:var(--fg-3);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;padding:11px 10px;border-bottom:1px solid var(--row);white-space:nowrap}
+th.n,td.n{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--row);vertical-align:middle}
+td:first-child{white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tfoot td{font-weight:700;border-top:1px solid var(--row);background:var(--row-h)}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--row-h)}
+.barcell{display:flex;align-items:center;gap:8px;min-width:120px}
+.barcell i{display:block;height:8px;border-radius:0 4px 4px 0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+
+/* Estados */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:700;white-space:nowrap}
+.pill.g{background:var(--good-bg);color:var(--good)} .pill.w{background:var(--warn-bg);color:var(--warn)} .pill.c{background:var(--crit-bg);color:var(--crit)} .pill.n{background:var(--row);color:var(--fg-2)}
+.pill.g::before{content:"▲";font-size:.6rem} .pill.c::before{content:"▼";font-size:.6rem} .pill.w::before{content:"●";font-size:.55rem}
+.note{font-size:.84rem;color:var(--fg-2);padding:12px 16px;display:flex;flex-direction:column;gap:5px}
+.note b{color:var(--fg)}
+.note.warn{background:var(--warn-bg);border-color:transparent;box-shadow:none}
+.muted{color:var(--fg-3)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--fg-2)}
+
+/* Píldoras de tienda */
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pp{appearance:none;border:1px solid var(--glass-line);background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--edge);border-radius:999px;padding:7px 15px;font-weight:700;font-size:.85rem;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.pp:hover{border-color:var(--fg-3)}
+.pp[aria-pressed="true"]{background:var(--sel-bg);color:#fff;border-color:var(--sel-bg);box-shadow:0 6px 16px rgba(19,41,75,.28)}
+.pp[disabled]{opacity:.45;cursor:not-allowed}
+.pp sup{font-family:var(--f-num);font-size:.68rem;font-weight:700;opacity:.8}
+.seg{display:inline-flex;padding:4px;border-radius:999px;gap:2px}
+.seg button{appearance:none;border:0;background:none;padding:6px 14px;border-radius:999px;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--fg-2)}
+.seg button[aria-pressed="true"]{background:var(--sel-bg);color:#fff;box-shadow:0 2px 8px rgba(19,41,75,.18)}
+
+/* Grupos */
+.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.grp{padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.grp h3{font-size:.98rem;font-weight:700}
+.grp .big{font-family:var(--f-num);font-size:1.55rem;font-weight:700;letter-spacing:-.02em}
+.grp .track{height:8px;border-radius:999px;background:var(--row);overflow:hidden}
+.grp .track i{display:block;height:100%;border-radius:999px}
+.grp p{margin:0;font-size:.82rem;color:var(--fg-2);line-height:1.45}
+
+/* Cascada */
+.casc{display:flex;flex-direction:column;gap:12px}
+.cbar{display:flex;height:34px;gap:2px;border-radius:9px;overflow:hidden}
+.cbar span{display:flex;align-items:center;justify-content:center;font-family:var(--f-num);font-size:.76rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;min-width:0}
+.cleg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:8px 16px;font-size:.82rem;color:var(--fg-2)}
+.cleg b{display:block;font-family:var(--f-num);font-size:1.05rem;color:var(--fg)}
+
+/* Despostes */
+.dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.dcard{appearance:none;text-align:left;padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;min-width:0}
+.dcard:hover{border-color:var(--green)}
+.dcard[aria-pressed="true"]{box-shadow:0 0 0 2px var(--green),var(--shadow)}
+.dcard .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.dcard .t{font-family:var(--f-display);font-weight:700}
+.dcard .nm{font-size:.82rem;color:var(--fg-2);line-height:1.35}
+.dcard dl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0}
+.dcard dt{font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3);font-weight:700}
+.dcard dd{margin:0;font-family:var(--f-num);font-size:.9rem;font-weight:700}
+.mix{display:flex;height:10px;gap:2px;border-radius:5px;overflow:hidden}
+.mix span{display:block;height:100%}
+
+/* Carga */
+.drop{border:2px dashed var(--fg-3);border-radius:var(--r);padding:28px 16px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.drop.on{border-color:var(--green);background:var(--good-bg)}
+.drop h3{font-size:1.1rem}
+.btn{appearance:none;border:1px solid var(--glass-line);background:var(--glass);box-shadow:inset 0 0 0 1px var(--edge);border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer}
+.btn:hover{border-color:var(--fg-3)}
+.btn.pri{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 6px 16px rgba(30,122,82,.28)}
+.btn.dng{color:var(--crit)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.log{font-size:.84rem;display:flex;flex-direction:column;gap:6px}
+.log div{display:flex;gap:8px;align-items:baseline}
+select.mini,input.mini{background:var(--glass-2);border:1px solid var(--glass-line);box-shadow:inset 0 0 0 1px var(--edge);border-radius:7px;padding:4px 6px;font-size:.84rem;max-width:100%}
+input.mini{width:80px;text-align:right;font-family:var(--f-num)}
+input.mini.wide{width:100%;text-align:left;font-family:var(--f-body);padding:8px 10px}
+.flab{display:flex;flex-direction:column;gap:4px;font-size:.7rem;font-weight:700;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;min-width:0;flex:1 1 280px}
+.dotst{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg-3)}
+.st-g .dotst{background:var(--good)} .st-w .dotst{background:var(--gold-2)} .st-c .dotst{background:var(--crit)}
+.hdr .chips{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.chartbox{position:relative;height:270px}
+.formula{font-family:var(--f-num);font-size:.78rem;background:var(--row);padding:8px 10px;border-radius:7px;overflow-x:auto;white-space:pre}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.fgrid h3{font-size:.92rem;margin-bottom:4px}
+.fgrid p{margin:4px 0 0;font-size:.84rem;color:var(--fg-2)}
+.empty{padding:28px 16px;text-align:center;color:var(--fg-2)}
+@media (max-width:560px){.brand h1{font-size:1.3rem}.sel{min-width:140px}.kpi .v{font-size:1.28rem}.hdr{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header><div class="wrap"><div class="glass hdr">
+  <div class="brand"><small>Grupo Garzón · Perecederos · Carnes Rojas</small><h1>Tablero <em>Carne de Res</em></h1></div>
+  <div class="flt">
+    <label for="fTienda">Tienda<select class="sel" id="fTienda"></select></label>
+    <label for="fMes">Período<select class="sel" id="fMes"></select></label>
+  </div>
+  <div class="chips"><span class="chip" id="stamp"></span><span class="chip" id="nube"></span></div>
+</div></div></header>
+<nav class="tabs" aria-label="Vistas"><div class="wrap"><div class="glass bar" role="tablist" id="tabs"></div></div></nav>
+<main><div class="wrap" id="view"></div></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/*__CORE__*/
+</script>
+<script>
+const SEED = /*__SEED__*/;
+</script>
+<script>
+(() => {
+const { FAMILIAS, CLASES, MOTIVO_CLASES, TIENDAS, norm, sum } = Core;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NF = d => { const f = new Intl.NumberFormat('es-VE', { minimumFractionDigits:d, maximumFractionDigits:d }); return { format: v => f.format(Math.abs(v) < 0.5 * 10 ** -d ? 0 : v) }; };
+const nf0 = NF(0), nf1 = NF(1), nf2 = NF(2);
+const fUSD = (v, d=0) => (v < 0 ? '−' : '') + '$' + (d ? NF(d) : nf0).format(Math.abs(v || 0));
+const fKg = (v, d=1) => (d ? NF(d) : nf0).format(v || 0) + ' kg';
+const fPct = (v, d=1) => (v == null || !isFinite(v)) ? '—' : NF(d).format(v*100) + '%';
+const fPP = v => (v>0?'+':'') + nf1.format(v*100) + ' pp';
+const fFecha = f => f ? f.slice(8,10)+'/'+f.slice(5,7)+'/'+f.slice(0,4) : '—';
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fMes = m => m === '*' ? 'Todo lo cargado' : MESES[+m.slice(5,7)-1] + ' ' + m.slice(0,4);
+const titulo = t => String(t).toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+const famNombre = id => (FAMILIAS.find(f=>f.id===id)||{}).nombre || id || 'Sin familia';
+const CLASE_COLOR = { ESPECIAL:'--s2', PRIMERA:'--s1', SEGUNDA:'--s3', TERCERA:'--s4', VISCERA:'--s5', GRASA:'--sm', MERMA:'--sm', SIN:'--sm' };
+const GRUPOS = ['ESPECIAL','PRIMERA','SEGUNDA','TERCERA'];
+const cssv = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- Persistencia (IndexedDB; si falla, queda en memoria) ---------- */
+const DB = { db:null,
+  async open(){ try { this.db = await new Promise((res, rej) => { const r = indexedDB.open('tablero-res', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); } catch(e) { this.db = null; } },
+  async get(k){ if(!this.db) return undefined; try { return await new Promise((res, rej) => { const r = this.db.transaction('kv').objectStore('kv').get(k); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); } catch(e){ return undefined; } },
+  async set(k, v){ if(!this.db) return; try { await new Promise((res, rej) => { const t = this.db.transaction('kv','readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); } catch(e){} }
+};
+const S = { despostes:[], ventas:[], ajustes:[], ov:{}, ovMot:{}, est:{}, tienda:'*', mes:'*', tab:'panel', sel:null, canal:'REF', base:'lista', log:[], confirm:null };
+const VIEWS = [['panel','Panel general'],['canal','Desposte en canal'],['despostes','Últimos despostes'],['mensual','Promedio mensual'],['kardex','Merma Kardex'],['cruce','Cruce compra · venta'],['carga','Cargar archivos'],['catalogo','Catálogo y fórmulas']];
+const unpack = (K, rows) => rows.map(a => Object.fromEntries(K.map((k,i)=>[k,a[i]])));
+/*__CLOUD__*/
+
+function seedState(){
+  S.despostes = JSON.parse(JSON.stringify(SEED.despostes));
+  S.ventas = unpack(SEED.vk, SEED.ventas); S.ajustes = unpack(SEED.ak, SEED.ajustes);
+}
+async function save(){ await DB.set('state', { despostes:S.despostes, ventas:S.ventas, ajustes:S.ajustes, ov:S.ov, ovMot:S.ovMot, est:S.est, ver:2 }); }
+async function load(){
+  await DB.open(); const st = await DB.get('state');
+  if (st && (st.despostes?.length || st.ventas?.length || st.ajustes?.length)) {
+    Object.assign(S, { despostes:st.despostes||[], ventas:st.ventas||[], ajustes:st.ajustes||[], ov:st.ov||{}, ovMot:st.ovMot||{}, est:st.est||{} });
+    if (!st.ver && !S.ajustes.length) { S.ajustes = unpack(SEED.ak, SEED.ajustes); await save(); }   // datos guardados por la versión 1, que no tenía ajustes
+    S.despostes.forEach(d => Core.validarDesposte(d));
+  } else seedState();
+  try { const p = JSON.parse(localStorage.getItem('tablero-res-ui')||'{}'); if (p.tab && VIEWS.some(v=>v[0]===p.tab)) S.tab = p.tab; if (p.base) S.base = p.base; } catch(e){}
+}
+function saveUI(){ try { localStorage.setItem('tablero-res-ui', JSON.stringify({ tab:S.tab, base:S.base })); } catch(e){} }
+
+/* ---------- Derivados ---------- */
+const famDesp = h => S.ov['D:'+norm(h.art)] || Core.familiaPorRegla(h.art);
+const mesDe = f => (f||'').slice(0,7);
+const inM = (f, mes) => mes === '*' || mesDe(f) === mes;
+const inT = (t, tienda) => tienda === '*' || t === tienda;
+const precioCache = new Map();
+function preciosReal(tienda, mes){
+  const k = tienda+'|'+mes; if (precioCache.has(k)) return precioCache.get(k);
+  const a = Core.aggVentas(S.ventas.filter(r => r.t === tienda && mesDe(r.f) === mes), S.ov);
+  const p = {}; Object.values(a.porFam).forEach(F => { if (F.kv > 0) p[F.fam] = F.precio; });
+  precioCache.set(k, p); return p;
+}
+function kpiD(d){ const dd = { ...d, hijos: d.hijos.map(h => ({ ...h, fam: famDesp(h) })) }; return Core.kpiDesposte(dd, preciosReal(d.tienda, mesDe(d.fecha))); }
+const padreD = d => (d.padres[0]||{}).padre || 'SIN_MAPEO';
+
+// Agregado de actas: rendimiento, merma técnica y utilidad por grupo/familia a la base de precio elegida
+function aggD(list, base = S.base){
+  const o = { n:list.length, kgP:0, kgV:0, kgM:0, kgC:0, cP:0, vR:0, vL:0, venta:0, costo:0, cls:{}, fams:{} };
+  list.forEach(d => { const k = kpiD(d);
+    o.kgP += k.kgPadre; o.kgV += k.kgVend; o.kgM += k.kgMerma; o.kgC += k.kgCarne; o.cP += k.costoPadre; o.vR += k.valorReal; o.vL += k.valorLista;
+    k.cortes.forEach(c => { const pr = c.vendible ? (base === 'real' ? (c.precioReal || c.precio) : c.precio) : 0; const v = c.kg * pr, co = c.kg * c.costoVRV;
+      const cl = c.clase || 'SIN'; const C = o.cls[cl] ||= { kg:0, venta:0, costo:0 }; C.kg += c.kg; C.venta += v; C.costo += co;
+      const F = o.fams[c.fam||'SIN'] ||= { fam:c.fam, clase:cl, kg:0, venta:0, costo:0 }; F.kg += c.kg; F.venta += v; F.costo += co;
+      o.venta += v; o.costo += co; }); });
+  Object.assign(o, { rend: o.kgP ? o.kgV/o.kgP : null, rendC: o.kgP ? o.kgC/o.kgP : null, merma: o.kgP ? o.kgM/o.kgP : null,
+    mgReal: o.vR ? 1-o.cP/o.vR : null, mgLista: o.vL ? 1-o.cP/o.vL : null, cKgP: o.kgP ? o.cP/o.kgP : null, cKgU: o.kgV ? o.cP/o.kgV : null,
+    util: o.venta - o.costo, mg: o.venta ? 1 - o.costo/o.venta : null });
+  return o;
+}
+let REFc = null; const REF = () => REFc ||= aggD(S.despostes);   // referencia = todas las actas cargadas
+// Métricas completas para una tienda ('*' = cadena) y un mes ('*' = todo)
+function metricas(tienda, mes, actasList){
+  const actas = actasList || S.despostes.filter(d => inT(d.tienda, tienda) && inM(d.fecha, mes));
+  const D = aggD(actas);
+  const ven = S.ventas.filter(r => inT(r.t, tienda) && inM(r.f, mes)); const av = Core.aggVentas(ven, S.ov);
+  const aj = Core.aggAjustes(S.ajustes.filter(r => inT(r.t, tienda) && inM(r.hasta, mes)), S.ov, S.ovMot);
+  const tV = new Set(ven.map(r=>r.t));   // la merma operativa solo se mide donde hay ventas cargadas
+  const ajV = Core.aggAjustes(S.ajustes.filter(r => tV.has(r.t) && inM(r.hasta, mes)), S.ov, S.ovMot);
+  const tRef = D.merma == null; const t = tRef ? REF().merma : D.merma;
+  const mt = Core.mermaTotal(t, ajV.K, av.tot.kvCanal);
+  return { actas, D, av, aj, ajV, mt, tRef, tV };
+}
+function estandar(padre){
+  const man = S.est[padre] || {}; const hist = {}; const lst = S.despostes.filter(d => padreD(d) === padre);
+  const kgP = sum(lst, d => sum(d.padres, p=>p.kg));
+  lst.forEach(d => d.hijos.forEach(h => { const f = famDesp(h); hist[f] = (hist[f]||0) + h.kg; }));
+  const out = {}; Object.keys(hist).forEach(f => out[f] = { pct: hist[f]/kgP, src:'hist' });
+  Object.keys(man).forEach(f => { if (man[f] != null && man[f] !== '') out[f] = { pct: +man[f]/100, src:'manual' }; });
+  return { fams:out, n:lst.length };
+}
+
+/* ---------- Gráficos ---------- */
+const charts = {};
+function chart(id, cfg){ if (charts[id]) charts[id].destroy(); const el = document.getElementById(id); if (!el || !window.Chart) return; charts[id] = new Chart(el, cfg); }
+const FBODY = '"Source Sans 3","Segoe UI",system-ui,sans-serif', FNUM = 'Verdana,Geneva,sans-serif';
+function baseOpts(){
+  const fg2 = cssv('--fg-2'), line = cssv('--row');
+  return { responsive:true, maintainAspectRatio:false, animation:false, interaction:{ mode:'index', intersect:false },
+    plugins:{ legend:{ labels:{ color:fg2, boxWidth:10, boxHeight:10, usePointStyle:true, pointStyle:'circle', font:{ family:FBODY, size:12 } } },
+      tooltip:{ backgroundColor:'rgba(14,30,54,.92)', titleColor:'#fff', bodyColor:'#EAF3F0', borderColor:cssv('--gold-2'), borderWidth:1, padding:10, cornerRadius:8, bodyFont:{ family:FNUM, size:11 }, titleFont:{ family:FBODY, weight:'700' } } },
+    scales:{ x:{ ticks:{ color:fg2, font:{ family:FNUM, size:10 } }, grid:{ display:false }, border:{ color:line } },
+             y:{ ticks:{ color:fg2, font:{ family:FNUM, size:10 }, callback:v=>nf0.format(v) }, grid:{ color:line }, border:{ display:false } } } };
+}
+const withTip = (o, label) => { o.plugins.tooltip.callbacks = { label }; return o; };
+
+/* ---------- Componentes ---------- */
+const kpi = (lb, v, sb, cls='', vcls='') => `<div class="glass kpi ${cls}"><span class="lb">${lb}</span><span class="v ${vcls}">${v}</span><span class="sb">${sb||''}</span></div>`;
+function pillDesv(d, invert=false, tol=0.015){ if (d == null || !isFinite(d)) return '<span class="pill n">sin ref.</span>'; const good = invert ? d < -tol : d > tol, bad = invert ? d > tol : d < -tol; return `<span class="pill ${good?'g':bad?'c':'w'}">${fPP(d)}</span>`; }
+function mixBar(cortes, kgP){
+  const by = {}; cortes.forEach(c => { const cl = c.clase || 'SIN'; by[cl] = (by[cl]||0) + c.kg; });
+  return `<div class="mix" role="img" aria-label="Composición del desposte">${Object.keys(by).sort((a,b)=>(CLASES[a]?.orden||9)-(CLASES[b]?.orden||9)).map(cl => `<span title="${esc(CLASES[cl]?.nombre||cl)}: ${fPct(by[cl]/kgP)}" style="width:${by[cl]/kgP*100}%;background:var(${CLASE_COLOR[cl]})"></span>`).join('')}</div>`;
+}
+const legendClases = cls => `<div class="legend">${cls.map(cl => `<span><i class="dot" style="background:var(${CLASE_COLOR[cl]})"></i>${CLASES[cl].nombre}</span>`).join('')}</div>`;
+function cascada(mt, kgP){
+  if (mt.t == null) return '<div class="empty">Sin actas de desposte para medir el rendimiento.</div>';
+  const t = mt.t, op = (1 - t) * (mt.o ?? 0), neto = 1 - t - op;
+  const seg = (w, v, lbl) => w > 0.0005 ? `<span style="flex:${w} 1 0;background:var(${v})" title="${lbl}: ${fPct(w)}">${w > .07 ? fPct(w) : ''}</span>` : '';
+  return `<div class="casc"><div class="cbar" role="img" aria-label="Rendimiento neto ${fPct(neto)}, merma operativa ${fPct(op)}, merma técnica ${fPct(t)}">${seg(neto,'--s3','Rendimiento neto')}${seg(op,'--sm2','Merma operativa')}${seg(t,'--sm','Merma técnica')}</div>
+  <div class="cleg"><span><i class="dot" style="background:var(--s3)"></i>Rendimiento neto<b>${fPct(neto)}</b>${kgP?`<span class="num">${fKg(neto*kgP)}</span> equivalentes del canal`:''}</span>
+  <span><i class="dot" style="background:var(--sm2)"></i>Merma operativa (Kardex)<b>${mt.o==null?'sin ventas':fPct(op)}</b>${mt.o==null?'falta VentasxDpto para medirla':`${fPct(mt.o)} del producto disponible`}</span>
+  <span><i class="dot" style="background:var(--sm)"></i>Merma técnica (actas)<b>${fPct(t)}</b>hueso, sebo y oreo no vendibles</span>
+  <span><i class="dot" style="background:transparent;box-shadow:inset 0 0 0 2px var(--fg-3)"></i>Merma total<b>${fPct(mt.o==null?null:mt.total)}</b>técnica + operativa</span></div></div>`;
+}
+
+/* ---------- Panel general ---------- */
+function vPanel(){
+  const M = metricas(S.tienda, S.mes); const { D, av, aj, mt } = M; const mg = av.tot.sv - av.tot.cv;
+  const ven = S.ventas.filter(r => inT(r.t,S.tienda) && inM(r.f,S.mes));
+  let h = `<section class="sec"><div class="sec-h"><h2>${S.tienda==='*'?'Consolidado cadena':titulo(S.tienda)} · ${fMes(S.mes)}</h2><p>${ven.length ? `Ventas del ${fFecha(ven.reduce((m,r)=>r.f<m?r.f:m,'9'))} al ${fFecha(ven.reduce((m,r)=>r.f>m?r.f:m,''))}` : 'Sin ventas para este filtro'}</p></div>
+  <div class="kpis">
+    ${kpi('Venta neta', fUSD(av.tot.sv), `<span class="num">${fKg(av.tot.kv,0)}</span> · <span class="num">${fUSD(av.tot.sv/(av.tot.kv||1),2)}</span>/kg`, 'hl')}
+    ${kpi('Utilidad bruta', fUSD(mg), `Margen <span class="num">${fPct(av.tot.sv?mg/av.tot.sv:null)}</span> · costo ERP`)}
+    ${kpi('Compra de canal', fKg(av.padres.kg,0), `<span class="num">${fUSD(av.padres.sc)}</span> · <span class="num">${fUSD(av.padres.kg?av.padres.sc/av.padres.kg:0,2)}</span>/kg`)}
+    ${kpi('Rendimiento neto', fPct(mt.o==null?null:mt.neto), `acta <span class="num">${fPct(mt.t==null?null:1-mt.t)}</span>${M.tRef?' (ref.)':''} menos merma Kardex`, '', 'good')}
+    ${kpi('Merma total', fPct(mt.o==null?null:mt.total), `técnica <span class="num">${fPct(mt.t)}</span> · operativa <span class="num">${fPct(mt.o)}</span>`, '', 'bad')}
+    ${kpi('Merma Kardex', fKg(aj.K,0), `<span class="num">${fUSD(aj.Kusd)}</span> de canal${aj.Kvisc?` · vísceras <span class="num">${fKg(aj.Kvisc,0)}</span>`:''}`)}
+  </div>`;
+  const avisos = [];
+  if (D.n && av.padres.kg) avisos.push(`<b>Cobertura de actas:</b> <span class="num">${fKg(D.kgP,0)}</span> despostados en actas frente a <span class="num">${fKg(av.padres.kg,0)}</span> de canal comprada (${fPct(D.kgP/av.padres.kg)}). El rendimiento del acta representa solo las actas cargadas.`);
+  if (M.tRef && S.despostes.length) avisos.push(`<b>Sin actas en este filtro:</b> la merma técnica usa la referencia de todas las actas cargadas (${fPct(REF().merma)}).`);
+  const tAj = new Set(S.ajustes.filter(r=>inT(r.t,S.tienda)&&inM(r.hasta,S.mes)).map(r=>r.t));
+  if (aj.K && [...tAj].some(t => !M.tV.has(t))) avisos.push(`<b>Merma operativa parcial:</b> el % se mide solo en ${M.tV.size} de ${tAj.size} tiendas, las que tienen VentasxDpto cargado; los kg de merma Kardex sí incluyen todas.`);
+  if (!Cloud.cfg) avisos.push(`<b>Datos solo en este navegador:</b> conecta Supabase en Cargar archivos para que no se pierdan.`);
+  if (Cloud.pend.length) avisos.push(`<b>${Cloud.pend.length} carga(s) sin subir a Supabase:</b> ${esc(Cloud.error)} Se reintentan al recargar desde Cargar archivos.`);
+  if (av.sinMapeo.length) avisos.push(`<b>${av.sinMapeo.length} artículo(s) sin familia:</b> ${esc(av.sinMapeo.slice(0,4).join('; '))}${av.sinMapeo.length>4?'…':''}. Asígnalos en Catálogo y fórmulas.`);
+  if (avisos.length) h += `<div class="glass note warn">${avisos.map(x=>`<span>${x}</span>`).join('')}</div>`;
+  h += `</section>`;
+  h += `<section class="sec"><div class="sec-h"><h2>Del canal a la caja</h2><p>Merma técnica del desposte + merma operativa de los ajustes de Kardex</p></div><div class="glass pad">${cascada(mt, D.kgP)}</div></section>`;
+
+  const fams = Object.values(av.porFam).sort((x,y) => (CLASES[Core.famClase(x.fam)]?.orden||9)-(CLASES[Core.famClase(y.fam)]?.orden||9) || y.sv-x.sv);
+  const maxSv = Math.max(1, ...fams.map(f=>f.sv));
+  h += `<div class="grid2"><section class="sec"><div class="sec-h"><h2>Venta por familia de corte</h2><p>Precio y margen realizados en caja</p></div><div class="glass tw"><table>
+   <thead><tr><th>Familia</th><th class="n">Kg</th><th>Venta $</th><th class="n">$/kg</th><th class="n">Margen</th></tr></thead><tbody>
+   ${fams.map(f => { const cl = Core.famClase(f.fam); return `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[cl]})"></i>${esc(famNombre(f.fam))}</td><td class="n">${nf1.format(f.kv)}</td><td><div class="barcell"><i style="width:${f.sv/maxSv*90}px;background:var(${CLASE_COLOR[cl]})"></i><span class="num">${nf0.format(f.sv)}</span></div></td><td class="n">${nf2.format(f.precio)}</td><td class="n">${fPct(f.margen)}</td></tr>`; }).join('')}
+   </tbody><tfoot><tr><td>Total</td><td class="n">${nf1.format(av.tot.kv)}</td><td class="num">${nf0.format(av.tot.sv)}</td><td class="n">${nf2.format(av.tot.sv/(av.tot.kv||1))}</td><td class="n">${fPct(av.tot.sv?mg/av.tot.sv:null)}</td></tr></tfoot></table></div></section>
+   <section class="sec"><div class="sec-h"><h2>Venta diaria</h2><p>Venta neta $ por día</p></div><div class="glass pad"><div class="chartbox"><canvas id="cDia" aria-label="Venta diaria"></canvas></div></div></section></div>`;
+
+  if (S.tienda === '*') {
+    const ts = TIENDAS.filter(t => S.ventas.some(r=>r.t===t) || S.despostes.some(d=>d.tienda===t) || S.ajustes.some(r=>r.t===t));
+    const filas = ts.map(t => ({ t, m: metricas(t, S.mes) }));
+    h += `<section class="sec"><div class="sec-h"><h2>Comparativo por tienda</h2><p>Toca una fila para filtrar el tablero</p></div><div class="glass tw"><table>
+    <thead><tr><th>Tienda</th><th class="n">Venta $</th><th class="n">Margen</th><th class="n">Kg vendidos</th><th class="n">Kg canal comprados</th><th class="n">$/kg canal</th><th class="n">Actas</th><th class="n">Rend. acta</th><th class="n">Merma Kardex kg</th><th class="n">Merma total</th><th class="n">Rend. neto</th></tr></thead><tbody>
+    ${filas.map(({t,m}) => `<tr class="click" data-t="${esc(t)}"><td>${esc(titulo(t))}</td><td class="n">${m.av.tot.sv?nf0.format(m.av.tot.sv):'—'}</td><td class="n">${fPct(m.av.tot.sv?1-m.av.tot.cv/m.av.tot.sv:null)}</td><td class="n">${m.av.tot.kv?nf0.format(m.av.tot.kv):'—'}</td><td class="n">${m.av.padres.kg?nf0.format(m.av.padres.kg):'—'}</td><td class="n">${m.av.padres.kg?nf2.format(m.av.padres.sc/m.av.padres.kg):'—'}</td><td class="n">${m.D.n||'—'}</td><td class="n">${fPct(m.D.rend)}</td><td class="n">${nf1.format(m.aj.K)}</td><td class="n">${m.mt.o==null?'—':fPct(m.mt.total)+(m.tRef?'<span class="muted">*</span>':'')}</td><td class="n">${m.mt.o==null?'—':fPct(m.mt.neto)+(m.tRef?'<span class="muted">*</span>':'')}</td></tr>`).join('')}
+    </tbody></table></div><p class="muted" style="margin:0;font-size:.8rem">* Tienda sin actas: merma técnica de referencia (${fPct(REF().merma)}). Merma total y rendimiento neto necesitan el VentasxDpto de la tienda.</p></section>`;
+  }
+  $('#view').innerHTML = h;
+  document.querySelectorAll('tr[data-t]').forEach(tr => tr.onclick = () => { S.tienda = tr.dataset.t; $('#fTienda').value = S.tienda; render(); });
+  const dias = Object.values(av.porDia).sort((x,y)=>x.f<y.f?-1:1);
+  const o = withTip(baseOpts(), c => ' ' + fUSD(c.raw) + ' · ' + fKg(dias[c.dataIndex].kv,0)); o.plugins.legend.display = false;
+  chart('cDia', { type:'bar', data:{ labels: dias.map(d=>d.f.slice(8,10)+'/'+d.f.slice(5,7)), datasets:[{ label:'Venta $', data:dias.map(d=>Math.round(d.sv)), backgroundColor:cssv('--s3'), borderRadius:{ topLeft:4, topRight:4 }, maxBarThickness:28 }] }, options:o });
+}
+
+/* ---------- Desposte en canal ---------- */
+function vCanal(){
+  const conActas = new Set(S.despostes.map(d=>d.tienda));
+  if (S.canal !== 'REF' && !conActas.has(S.canal)) S.canal = 'REF';
+  const ref = S.canal === 'REF';
+  const actas = ref ? S.despostes : S.despostes.filter(d => d.tienda === S.canal && inM(d.fecha, S.mes));
+  const M = ref ? metricas('*', '*', S.despostes) : metricas(S.canal, S.mes, actas);
+  const D = M.D, R = REF(), mt = M.mt;
+  const costoKgCanal = D.cKgP;
+  let h = `<section class="sec"><div class="row" style="justify-content:space-between;gap:12px"><div class="sec-h"><h2>Desposte de res en canal</h2><p>Margen = (${S.base==='real'?'precio realizado':'PMVP'} − costo VRV) / ${S.base==='real'?'precio realizado':'PMVP'}</p></div>
+   <span class="chip">${ref?'Referencia · todas las actas':esc(titulo(S.canal))+' · '+fMes(S.mes)} · Canal <b>${fKg(D.kgP)}</b> · <b>${fUSD(costoKgCanal||0,2)}</b>/kg · <b>${D.n}</b> acta${D.n===1?'':'s'}</span></div>
+   <div class="pills" role="group" aria-label="Tienda"><button class="pp" data-c="REF" aria-pressed="${ref}">Referencia<sup>${S.despostes.length}</sup></button>${TIENDAS.map(t => { const n = S.despostes.filter(d=>d.tienda===t).length; return `<button class="pp" data-c="${t}" aria-pressed="${S.canal===t}" ${n?'':'disabled'}>${esc(titulo(t))}${n?`<sup>${n}</sup>`:''}</button>`; }).join('')}</div>
+   <div class="row"><span class="muted" style="font-size:.82rem;font-weight:600">Precio para la utilidad</span><div class="glass seg" role="group"><button data-b="lista" aria-pressed="${S.base==='lista'}">PMVP del acta</button><button data-b="real" aria-pressed="${S.base==='real'}">Precio realizado en caja</button></div></div></section>`;
+  if (!D.n) { $('#view').innerHTML = h + `<div class="glass empty"><h2>No hay actas de ${esc(titulo(S.canal))} en ${fMes(S.mes)}</h2><p>Cambia el período o carga el PDF en Cargar archivos.</p></div>`; bindCanal(); return; }
+  const dRend = ref ? null : D.rend - R.rend;
+  h += `<div class="kpis">
+    ${kpi('Utilidad bruta', fUSD(D.util,2), `Margen <span class="num">${fPct(D.mg)}</span> sobre venta`, 'hl')}
+    ${kpi('Venta potencial', fUSD(D.venta,0), `Costo canal <span class="num">${fUSD(D.cP,2)}</span>`)}
+    ${kpi('Rendimiento del acta', fPct(D.rend), `<span class="num">${fKg(D.kgV)}</span> aprovechables${dRend!=null?` · ${pillDesv(dRend)}`:''}`, '', 'good')}
+    ${kpi('Rendimiento neto', fPct(mt.o==null?null:mt.neto), mt.o==null?'sin VentasxDpto para medir Kardex':`tras <span class="num">${fKg(M.ajV.K,1)}</span> de merma Kardex`, '', 'good')}
+    ${kpi('Merma total', fPct(mt.o==null?null:mt.total), `técnica <span class="num">${fKg(D.kgM)}</span> · <span class="num">${fUSD(D.kgM*(costoKgCanal||0))}</span> a costo canal`, '', 'bad')}
+    ${kpi('Costo por kg vendible', fUSD(D.cKgU||0,2), `vs <span class="num">${fUSD(costoKgCanal||0,2)}</span> del canal${mt.o!=null?` · neto <span class="num">${fUSD(D.cKgU/(1-mt.o),2)}</span>`:''}`)}
+  </div>
+  <section class="sec"><div class="sec-h"><h2>Del canal a la caja</h2><p>${ref?'Todas las actas y todos los ajustes cargados':esc(titulo(S.canal))+' · '+fMes(S.mes)}</p></div><div class="glass pad">${cascada(mt, D.kgP)}</div></section>
+  <div class="grid2"><section class="sec"><div class="sec-h"><h2>Distribución del canal</h2><p>Kg del acta por grupo</p></div><div class="glass pad"><div class="chartbox"><canvas id="cDona" aria-label="Distribución del canal"></canvas></div></div></section>
+  <section class="sec"><div class="sec-h"><h2>Utilidad $ por grupo</h2><p>${S.base==='real'?'A precio realizado':'A PMVP'}</p></div><div class="glass pad"><div class="chartbox"><canvas id="cUtil" aria-label="Utilidad por grupo"></canvas></div></div></section></div>`;
+  h += `<div class="groups">${GRUPOS.filter(g => D.cls[g]).map(g => { const C = D.cls[g], u = C.venta - C.costo, m = C.venta ? u/C.venta : null; const rc = R.cls[g] ? R.cls[g].kg/R.kgP : null;
+    return `<div class="glass grp"><h3>${CLASES[g].nombre}</h3><span class="big" style="color:var(${CLASE_COLOR[g]})">${fPct(m)}</span><div class="track"><i style="width:${Math.max(0,D.util? u/D.util*100:0)}%;background:var(${CLASE_COLOR[g]})"></i></div>
+    <p><span class="num">${fKg(C.kg)}</span> · <span class="num">${fPct(C.kg/D.kgP)}</span> del canal${!ref&&rc!=null?` · ${pillDesv(C.kg/D.kgP - rc, false, 0.005)}`:''}</p>
+    <p>Venta <span class="num">${fUSD(C.venta,2)}</span> · Utilidad <span class="num">${fUSD(u,2)}</span></p><p><span class="num">${fPct(D.util?u/D.util:null)}</span> de la utilidad total</p></div>`; }).join('')}</div>`;
+  const fl = Object.values(D.fams).sort((a,b)=>(CLASES[a.clase]?.orden||9)-(CLASES[b.clase]?.orden||9) || b.kg-a.kg);
+  h += `<section class="sec"><div class="sec-h"><h2>Escandallo ${ref?'de referencia':'acumulado'}</h2><p>${ref?'Todas las actas cargadas':'Comparado con la referencia de todas las actas'}</p></div><div class="glass tw"><table><thead><tr><th>Familia</th><th class="n">Kg</th><th class="n">% canal</th><th class="n">Referencia</th><th>Desv.</th><th class="n">Costo VRV $/kg</th><th class="n">Precio $/kg</th><th class="n">Venta $</th><th class="n">Utilidad $</th><th class="n">Margen</th></tr></thead><tbody>
+  ${fl.map(F => { const r = R.fams[F.fam] ? R.fams[F.fam].kg/R.kgP : null; const p = F.kg/D.kgP; const nv = F.clase==='MERMA'||F.clase==='GRASA';
+    return `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[F.clase]||'--sm'})"></i>${esc(famNombre(F.fam))}</td><td class="n">${nf2.format(F.kg)}</td><td class="n">${fPct(p,2)}</td><td class="n">${fPct(r,2)}</td><td>${ref?'<span class="pill n">ref.</span>':pillDesv(p-(r??p), nv, 0.005)}</td><td class="n">${nv?'—':nf2.format(F.costo/F.kg)}</td><td class="n">${nv?'—':nf2.format(F.venta/F.kg)}</td><td class="n">${nv?'—':nf2.format(F.venta)}</td><td class="n">${nv?'—':nf2.format(F.venta-F.costo)}</td><td class="n">${nv||!F.venta?'—':fPct(1-F.costo/F.venta)}</td></tr>`; }).join('')}
+  </tbody><tfoot><tr><td>Total</td><td class="n">${nf2.format(D.kgP)}</td><td class="n">100,00%</td><td></td><td></td><td class="n">${nf2.format(D.cKgU||0)}</td><td class="n">${nf2.format(D.kgV?D.venta/D.kgV:0)}</td><td class="n">${nf2.format(D.venta)}</td><td class="n">${nf2.format(D.util)}</td><td class="n">${fPct(D.mg)}</td></tr></tfoot></table></div>
+  <div class="glass note"><span><b>Referencia</b> = promedio ponderado por kg de canal de todas las actas cargadas, de todas las tiendas y fechas; se recalcula con cada PDF nuevo. El costo de cada corte se asigna por valor relativo de venta, igual que el ERP.${S.base==='real'?' Con precio realizado, las familias sin venta en el mes usan el PMVP del acta.':''}</span>
+  <span><b>Merma operativa</b> = merma Kardex neta de la canal ÷ (kg vendidos de canal + esa merma); en Referencia usa todas las tiendas con VentasxDpto cargado.</span></div></section>`;
+  $('#view').innerHTML = h; bindCanal();
+  const cls = Object.keys(D.cls).sort((a,b)=>(CLASES[a]?.orden||9)-(CLASES[b]?.orden||9));
+  const od = baseOpts(); delete od.scales; od.interaction = { mode:'nearest', intersect:true }; od.cutout = '62%'; od.plugins.legend.position = 'bottom';
+  od.plugins.tooltip.callbacks = { label: c => ` ${c.label}: ${fKg(D.cls[cls[c.dataIndex]].kg)} · ${fPct(D.cls[cls[c.dataIndex]].kg/D.kgP)}` };
+  chart('cDona', { type:'doughnut', data:{ labels: cls.map(c=>CLASES[c]?.nombre||c), datasets:[{ data: cls.map(c=>+D.cls[c].kg.toFixed(2)), backgroundColor: cls.map(c=>cssv(CLASE_COLOR[c])), borderColor: cssv('--glass-line'), borderWidth:2, hoverOffset:6 }] }, options: od });
+  const gs = GRUPOS.filter(g => D.cls[g]);
+  const ou = withTip(baseOpts(), c => ` Utilidad ${fUSD(c.raw,2)} · margen ${fPct(D.cls[gs[c.dataIndex]].venta ? c.raw / D.cls[gs[c.dataIndex]].venta : null)}`); ou.plugins.legend.display = false; ou.scales.y.ticks.callback = v => '$' + nf0.format(v);
+  chart('cUtil', { type:'bar', data:{ labels: gs.map(g=>CLASES[g].nombre), datasets:[{ data: gs.map(g => +(D.cls[g].venta - D.cls[g].costo).toFixed(2)), backgroundColor: gs.map(g=>cssv(CLASE_COLOR[g])), borderRadius:{ topLeft:6, topRight:6 }, maxBarThickness:80 }] }, options: ou });
+}
+function bindCanal(){
+  document.querySelectorAll('.pp[data-c]').forEach(b => b.onclick = () => { if (b.disabled) return; S.canal = b.dataset.c; redraw(vCanal); });
+  document.querySelectorAll('.seg [data-b]').forEach(b => b.onclick = () => { S.base = b.dataset.b; REFc = null; saveUI(); redraw(vCanal); });
+}
+function redraw(fn){ Object.keys(charts).forEach(k => { charts[k].destroy(); delete charts[k]; }); fn(); }
+
+/* ---------- Últimos despostes ---------- */
+function vDespostes(){
+  const list = S.despostes.filter(d => inT(d.tienda,S.tienda) && inM(d.fecha,S.mes)).sort((a,b) => (b.fecha+b.id).localeCompare(a.fecha+a.id));
+  if (!list.length) { $('#view').innerHTML = `<div class="glass empty"><h2>No hay actas de desposte para este filtro</h2><p>Carga el PDF "Reporte de Producción" en Cargar archivos.</p></div>`; return; }
+  if (!S.sel || !list.find(d=>d.id===S.sel)) S.sel = list[0].id;
+  let h = `<section class="sec"><div class="sec-h"><h2>Últimas actas cargadas</h2><p>${list.length} acta${list.length>1?'s':''} · por fecha de producción</p></div>${legendClases(['ESPECIAL','PRIMERA','SEGUNDA','TERCERA','MERMA'])}<div class="dlist">`;
+  list.slice(0, 30).forEach(d => {
+    const k = kpiD(d); const st = estandar(padreD(d)); const refRend = sum(Object.entries(st.fams).filter(([f])=>!['MERMA','GRASA'].includes(Core.famClase(f))), ([,v])=>v.pct);
+    h += `<button class="glass dcard" data-id="${esc(d.id)}" aria-pressed="${d.id===S.sel}">
+      <div class="top"><span class="t">${esc(titulo(d.tienda))}</span><span class="num muted">${fFecha(d.fecha)}</span></div>
+      <span class="nm">${esc(d.nombre)}</span>${mixBar(k.cortes, k.kgPadre)}
+      <dl><div><dt>Canal</dt><dd>${nf1.format(k.kgPadre)}</dd></div><div><dt>Rend. vend.</dt><dd>${fPct(k.rendVend)}</dd></div><div><dt>Merma téc.</dt><dd>${fPct(k.pctMerma)}</dd></div>
+      <div><dt>$/kg útil</dt><dd>${nf2.format(k.costoKgUtil)}</dd></div><div><dt>Mg. PMVP</dt><dd>${fPct(k.margenLista)}</dd></div><div><dt>Mg. real</dt><dd>${fPct(k.margenReal)}</dd></div></dl>
+      <div class="row">${st.n>1 ? pillDesv(k.rendVend - refRend) + '<span class="muted" style="font-size:.76rem">vs promedio de todas las actas</span>' : '<span class="pill n">primera acta de este padre</span>'}${d.avisos?.length?`<span class="pill c">${d.avisos.length} aviso(s)</span>`:''}</div>
+    </button>`;
+  });
+  h += `</div></section>`;
+  const d = list.find(x=>x.id===S.sel), k = kpiD(d), st = estandar(padreD(d)); const p0 = d.padres[0] || {};
+  h += `<section class="sec"><div class="sec-h"><h2>Escandallo · ${esc(titulo(d.tienda))} ${fFecha(d.fecha)}</h2><p>Doc. ${esc(d.padres.map(p=>p.doc).join(', '))} · ${esc(p0.art||'')} · costo <span class="num">${fUSD(p0.costo,2)}</span>/kg</p></div>
+  <div class="kpis">
+    ${kpi('Canal despostada', fKg(k.kgPadre), `<span class="num">${fUSD(k.costoPadre,2)}</span>`, 'hl')}
+    ${kpi('Vendible', fKg(k.kgVend), `Rend. <span class="num">${fPct(k.rendVend)}</span> · carne <span class="num">${fPct(k.rendCarne)}</span>`)}
+    ${kpi('Merma técnica', fKg(k.kgMerma), `<span class="num">${fPct(k.pctMerma)}</span> del peso de canal`)}
+    ${kpi('Costo por kg útil', fUSD(k.costoKgUtil,2), `canal <span class="num">${fUSD(k.costoKgPadre,2)}</span>/kg`)}
+    ${kpi('Valor a PMVP', fUSD(k.valorLista,2), `Margen <span class="num">${fPct(k.margenLista)}</span>`)}
+    ${kpi('Valor a precio realizado', fUSD(k.valorReal,2), `Margen <span class="num">${fPct(k.margenReal)}</span>`)}
+  </div>
+  <div class="glass tw"><table><thead><tr><th>Corte</th><th>Familia</th><th class="n">Kg</th><th class="n">% rend.</th><th class="n">Promedio</th><th>Desv.</th><th class="n">Costo VRV $/kg</th><th class="n">PMVP</th><th class="n">Precio realizado</th><th class="n">Margen real</th></tr></thead><tbody>
+  ${k.cortes.map(c => { const e = st.fams[c.fam]; const mr = c.precioReal && c.vendible ? 1 - c.costoVRV/c.precioReal : null; const nv = !c.vendible; const show = e && (e.src==='manual' || st.n>1);
+    return `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[c.clase]||'--sm'})"></i>${esc(c.art)}</td><td>${esc(famNombre(c.fam))}</td><td class="n">${nf2.format(c.kg)}</td><td class="n">${fPct(c.rend,2)}</td><td class="n">${show?fPct(e.pct,2)+(e.src==='manual'?'':'<span class="muted">*</span>'):'—'}</td><td>${show?pillDesv(c.rend - e.pct, nv, 0.005):'<span class="pill n">sin ref.</span>'}</td><td class="n">${nv?'—':nf2.format(c.costoVRV)}</td><td class="n">${nv?'—':nf2.format(c.precio)}</td><td class="n">${c.precioReal&&!nv?nf2.format(c.precioReal):'—'}</td><td class="n">${mr==null?'—':fPct(mr)}</td></tr>`; }).join('')}
+  </tbody><tfoot><tr><td colspan="2">Total</td><td class="n">${nf2.format(k.kgVend + k.kgMerma)}</td><td class="n">${fPct((k.kgVend+k.kgMerma)/k.kgPadre,2)}</td><td colspan="6"></td></tr></tfoot></table></div>
+  <div class="glass note"><span><b>Controles del acta:</b> cuadre de kilos ${Math.abs(k.kgDif)<0.05?'<span class="pill g">cuadra</span>':`<span class="pill c">diferencia ${nf2.format(k.kgDif)} kg</span>`} · costo asignado ERP <span class="num">${fUSD(k.costoERP,2)}</span> vs costo del padre <span class="num">${fUSD(k.costoPadre,2)}</span> · margen uniforme por valor relativo de venta <span class="num">${fPct(k.margenLista)}</span>.</span>
+  <span>${st.n>1?`* Promedio ponderado de las ${st.n} actas cargadas del mismo tipo de novillo; un estándar manual en Catálogo y fórmulas lo reemplaza.`:'Es la primera acta de este tipo de novillo: la comparación aparece desde la segunda acta o con un estándar manual.'}${k.famsSinVenta.length?` Sin venta en el mes para ${esc([...new Set(k.famsSinVenta)].map(famNombre).join(', '))}: se usa el PMVP del acta.`:''}</span>
+  ${d.avisos?.length?`<span><b>Avisos de lectura:</b> ${esc(d.avisos.join(' · '))}</span>`:''}</div></section>`;
+  $('#view').innerHTML = h;
+  document.querySelectorAll('.dcard').forEach(b => b.onclick = () => { S.sel = b.dataset.id; vDespostes(); });
+}
+
+/* ---------- Promedio mensual ---------- */
+function vMensual(){
+  const meses = [...new Set(S.despostes.map(d=>mesDe(d.fecha)).concat(S.ventas.map(r=>mesDe(r.f)), S.ajustes.map(r=>mesDe(r.hasta))))].filter(Boolean).sort();
+  const filas = meses.map(m => ({ m, M: metricas(S.tienda, m) }));
+  let h = `<section class="sec"><div class="sec-h"><h2>Promedio mensual · ${S.tienda==='*'?'consolidado cadena':esc(titulo(S.tienda))}</h2><p>Ponderado por kg de canal despostada</p></div>
+  <div class="glass tw"><table><thead><tr><th>Mes</th><th class="n">Actas</th><th class="n">Kg despostados</th><th class="n">Rend. acta</th><th class="n">Rend. carne</th><th class="n">Merma técnica</th><th class="n">Merma Kardex kg</th><th class="n">Merma operativa</th><th class="n">Merma total</th><th class="n">Rend. neto</th><th class="n">$/kg canal</th><th class="n">$/kg útil</th><th class="n">Margen bruto</th></tr></thead><tbody>
+  ${filas.map(({m,M}) => `<tr><td>${fMes(m)}</td><td class="n">${M.D.n||'—'}</td><td class="n">${M.D.n?nf1.format(M.D.kgP):'—'}</td><td class="n">${fPct(M.D.rend)}</td><td class="n">${fPct(M.D.rendC)}</td><td class="n">${fPct(M.D.merma)}</td><td class="n">${nf1.format(M.aj.K)}</td><td class="n">${fPct(M.mt.o)}</td><td class="n">${M.mt.o==null?'—':fPct(M.mt.total)}</td><td class="n">${M.mt.o==null?'—':fPct(M.mt.neto)}</td><td class="n">${M.D.cKgP?nf2.format(M.D.cKgP):'—'}</td><td class="n">${M.D.cKgU?nf2.format(M.D.cKgU):'—'}</td><td class="n">${fPct(M.av.tot.sv?1-M.av.tot.cv/M.av.tot.sv:null)}</td></tr>`).join('')}
+  </tbody></table></div></section>`;
+  const tiendas = [...new Set(S.despostes.filter(d=>inT(d.tienda,S.tienda)).map(d=>d.tienda))].sort();
+  h += `<section class="sec"><div class="sec-h"><h2>Evolución del rendimiento del acta</h2><p>Por tienda y mes</p></div><div class="glass pad">${meses.length < 2 ? `<div class="empty">La serie se dibuja desde dos meses con actas. Hoy hay datos de ${meses.map(fMes).join(', ')||'ningún mes'}.</div>` : `<div class="chartbox"><canvas id="cMes"></canvas></div>`}</div></section>`;
+  $('#view').innerHTML = h;
+  if (meses.length >= 2) {
+    const pal = ['--s1','--s2','--s3','--s4','--s5']; const o = baseOpts(); o.scales.y.ticks.callback = v => v + '%';
+    chart('cMes', { type:'line', data:{ labels: meses.map(fMes), datasets: tiendas.slice(0,5).map((t,i) => ({ label: titulo(t), data: meses.map(m => { const D = aggD(S.despostes.filter(d => d.tienda===t && mesDe(d.fecha)===m)); return D.rend==null?null:+(D.rend*100).toFixed(2); }), borderColor:cssv(pal[i]), backgroundColor:cssv(pal[i]), borderWidth:2, pointRadius:4, spanGaps:true })) }, options:o });
+  }
+}
+
+/* ---------- Merma Kardex ---------- */
+function vKardex(){
+  const rows = S.ajustes.filter(r => inT(r.t,S.tienda) && inM(r.hasta,S.mes)); const A = Core.aggAjustes(rows, S.ov, S.ovMot);
+  if (!rows.length) { $('#view').innerHTML = `<div class="glass empty"><h2>No hay ajustes de Kardex para este filtro</h2><p>Carga el Excel "Ajustes de Kardex" en Cargar archivos.</p></div>`; return; }
+  const rango = [...new Set(rows.map(r=>fFecha(r.desde)+' al '+fFecha(r.hasta)))].join(' · ');
+  const mot = Object.values(A.porMot).sort((a,b)=>a.kg-b.kg);
+  const pillMot = cl => `<span class="pill ${cl==='MERMA'?'c':cl==='OTRO'?'w':'n'}">${MOTIVO_CLASES[cl].nombre}</span>`;
+  let h = `<section class="sec"><div class="sec-h"><h2>Ajustes de Kardex · ${S.tienda==='*'?'cadena':esc(titulo(S.tienda))}</h2><p>${esc(rango)} · ${nf0.format(rows.length)} movimientos</p></div>
+  <div class="kpis">
+    ${kpi('Merma de canal', fKg(A.K,1), `<span class="num">${fUSD(A.Kusd,2)}</span> · entra en la merma total`, 'hl')}
+    ${kpi('Merma vísceras y comprados', fKg(A.Kvisc,1), `<span class="num">${fUSD(A.Kotros,2)}</span> · trastes y Disprocar`)}
+    ${kpi('Consumo operativo', fKg(A.consumo,1), 'donación, comida al personal y promo; no es merma')}
+    ${kpi('Transformación neta', fKg(A.transf,1), 'kg que salen de la categoría al transformar; no es merma')}
+  </div></section>
+  <section class="sec"><div class="sec-h"><h2>Por motivo</h2><p>El tratamiento se cambia en Catálogo y fórmulas</p></div><div class="glass tw"><table><thead><tr><th>Motivo</th><th>Tratamiento</th><th class="n">Mov.</th><th class="n">Entradas kg</th><th class="n">Salidas kg</th><th class="n">Neto kg</th><th class="n">Neto canal kg</th><th class="n">Neto $</th></tr></thead><tbody>
+  ${mot.map(m => `<tr><td>${esc(m.mot)}</td><td>${pillMot(m.cl)}</td><td class="n">${m.n}</td><td class="n">${nf2.format(m.ent)}</td><td class="n">${nf2.format(m.sal)}</td><td class="n">${nf2.format(m.kg)}</td><td class="n">${nf2.format(m.kgCanal)}</td><td class="n">${nf2.format(m.usd)}</td></tr>`).join('')}
+  </tbody></table></div></section>`;
+  const ts = TIENDAS.filter(t => S.ajustes.some(r => r.t===t && inT(t,S.tienda) && inM(r.hasta,S.mes)));
+  h += `<div class="grid2"><section class="sec"><div class="sec-h"><h2>Por tienda</h2><p>Merma de canal y su peso sobre lo vendido</p></div><div class="glass tw"><table><thead><tr><th>Tienda</th><th class="n">Merma kg</th><th class="n">Merma $</th><th class="n">Merma operativa</th><th class="n">Transf. neta kg</th></tr></thead><tbody>
+  ${ts.map(t => { const m = metricas(t, S.mes); return `<tr><td>${esc(titulo(t))}</td><td class="n">${nf1.format(m.aj.K)}</td><td class="n">${nf2.format(m.aj.Kusd)}</td><td class="n">${m.mt.o==null?'<span class="muted">sin ventas</span>':fPct(m.mt.o)}</td><td class="n">${nf1.format(m.aj.transf)}</td></tr>`; }).join('')}
+  </tbody></table></div></section>`;
+  const ff = Object.values(A.porFam).filter(f => f.merma || f.transf).sort((a,b)=>a.merma-b.merma);
+  h += `<section class="sec"><div class="sec-h"><h2>Por familia</h2><p>Kg netos de merma y de transformación</p></div><div class="glass tw"><table><thead><tr><th>Familia</th><th>Grupo</th><th class="n">Merma kg</th><th class="n">Transformación kg</th></tr></thead><tbody>
+  ${ff.map(f => { const cl = Core.famClase(f.fam); return `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[cl]||'--sm'})"></i>${esc(famNombre(f.fam))}</td><td class="muted">${esc(CLASES[cl]?.nombre||'')}${Core.famCanal(f.fam)?'':' · fuera de canal'}</td><td class="n">${nf1.format(-f.merma)}</td><td class="n">${nf1.format(f.transf)}</td></tr>`; }).join('')}
+  </tbody></table></div></section></div>
+  <div class="glass note"><span><b>Qué cuenta como merma:</b> solo los motivos con tratamiento Merma (hoy avería, merma desconocida, merma natural y pérdida desconocida), netos de sus entradas. Donación, comida al personal y promo mercadeo son consumo operativo. Transformación de producción y cruce de códigos mueven kilos entre códigos y no son merma.</span>
+  <span>El reporte trae un rango de fechas, no la fecha de cada movimiento: los ajustes se asignan al mes de la fecha "Hasta". Si cargas un rango que se solapa con uno anterior de la misma tienda, el nuevo lo reemplaza.</span></div>`;
+  $('#view').innerHTML = h;
+}
+
+/* ---------- Cruce ---------- */
+function vCruce(){
+  const R = REF();
+  const ts = TIENDAS.filter(t => inT(t,S.tienda) && (S.ventas.some(r=>r.t===t) || S.despostes.some(d=>d.tienda===t)));
+  const filas = ts.map(t => { const m = metricas(t, S.mes); const rend = m.D.rend ?? R.rend;
+    const actasUsadas = m.D.n ? m.actas : S.despostes; const huesoEnActas = actasUsadas.some(d => d.hijos.some(hh => famDesp(hh)==='HUESO' && hh.precio > 0));
+    const kgVend = sum(Object.values(m.av.porFam).filter(f => Core.famCanal(f.fam) && (huesoEnActas || f.fam !== 'HUESO')), f => f.kv);
+    const prod = rend != null ? m.av.padres.kg * rend : null;
+    const disp = prod != null ? prod - Math.max(0, m.aj.K) - Math.max(0, m.aj.consumo) + m.aj.transf : null;
+    return { t, m, rend, fuente: m.D.n ? 'tienda' : 'ref', prod, disp, kgVend, idx: disp ? kgVend/disp : null }; }).filter(x => x.m.av.padres.kg || x.kgVend);
+  let h = `<section class="sec"><div class="sec-h"><h2>Cruce compra · desposte · Kardex · venta</h2><p>${fMes(S.mes)} · ¿cuánto de la canal comprada llegó a caja?</p></div>
+  <div class="glass tw"><table><thead><tr><th>Tienda</th><th class="n">Kg comprados</th><th class="n">Rend. acta</th><th class="n">Kg vendibles</th><th class="n">− Merma Kardex</th><th class="n">− Consumo op.</th><th class="n">± Transf.</th><th class="n">= Disponible</th><th class="n">Kg vendidos</th><th class="n">Realización</th><th class="n">Brecha kg</th></tr></thead><tbody>
+  ${filas.map(x => `<tr><td>${esc(titulo(x.t))}</td><td class="n">${nf0.format(x.m.av.padres.kg)}</td><td class="n">${fPct(x.rend)}${x.fuente==='ref'?'<span class="muted">†</span>':''}</td><td class="n">${x.prod!=null?nf0.format(x.prod):'—'}</td><td class="n">${nf0.format(x.m.aj.K)}</td><td class="n">${nf0.format(x.m.aj.consumo)}</td><td class="n">${nf0.format(x.m.aj.transf)}</td><td class="n">${x.disp!=null?nf0.format(x.disp):'—'}</td><td class="n">${nf0.format(x.kgVend)}</td><td class="n">${x.idx==null?'—':`<span class="pill ${x.idx<0.85?'c':x.idx<0.95||x.idx>1.05?'w':'g'}">${fPct(x.idx)}</span>`}</td><td class="n">${x.disp!=null?nf0.format(x.disp-x.kgVend):'—'}</td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="glass note"><span><b>Cómo leerlo:</b> kg vendibles = kg de canal comprada × rendimiento del acta. Se restan la merma y el consumo operativo del Kardex y se suma la transformación neta (negativa cuando el producto sale a otra categoría). Realización = kg vendidos de familias de canal ÷ disponible. La brecha que queda es inventario en cava o mostrador y diferencias de pesaje; sin inventario inicial y final no se pueden separar.</span>
+  <span>† Tienda sin actas en el período: usa el rendimiento de referencia de todas las actas (${fPct(R.rend)}). Si las actas registran el hueso dentro de la merma, el hueso vendido no se cuenta en kg vendidos. Sobre 100 % suele indicar inventario del mes anterior.</span></div></section>`;
+  const dl = S.despostes.filter(d => inT(d.tienda,S.tienda) && inM(d.fecha,S.mes)); const tAct = new Set(dl.map(d=>d.tienda));
+  const av = Core.aggVentas(S.ventas.filter(r => inT(r.t,S.tienda) && inM(r.f,S.mes) && tAct.has(r.t)), S.ov);
+  const aj = Core.aggAjustes(S.ajustes.filter(r => tAct.has(r.t) && inM(r.hasta,S.mes)), S.ov, S.ovMot);
+  const prod = {}; let kgProd = 0;
+  dl.forEach(d => d.hijos.forEach(hh => { const f = famDesp(hh); if (['MERMA','GRASA'].includes(Core.famClase(f)) || !(hh.precio > 0)) return; prod[f] = (prod[f]||0) + hh.kg; kgProd += hh.kg; }));
+  Object.values(aj.porFam).forEach(F => { if (!F.transf || !Core.famCanal(F.fam)) return; prod[F.fam] = (prod[F.fam]||0) + F.transf; kgProd += F.transf; });
+  const vend = {}; let kgV = 0; Object.values(av.porFam).forEach(F => { if (!Core.famCanal(F.fam)) return; vend[F.fam] = F.kv; kgV += F.kv; });
+  const fams = FAMILIAS.filter(f => prod[f.id] || vend[f.id]).map(f => f.id);
+  h += `<div class="grid2"><section class="sec"><div class="sec-h"><h2>Mix producido vs. mix vendido</h2><p>% de los kg vendibles · ${tAct.size ? esc([...tAct].map(titulo).join(', ')) : 'sin actas'}</p></div><div class="glass pad">${kgProd&&kgV?`<div class="chartbox" style="height:${Math.max(240, fams.length*40)}px"><canvas id="cMix"></canvas></div>`:'<div class="empty">Se necesitan actas y ventas de la misma tienda y período.</div>'}</div></section>
+  <section class="sec"><div class="sec-h"><h2>Detalle del mix</h2><p>Producido = actas + transformaciones del Kardex</p></div><div class="glass tw"><table><thead><tr><th>Familia</th><th class="n">Producido</th><th class="n">Vendido</th><th>Dif.</th></tr></thead><tbody>
+  ${fams.map(f => { const p = kgProd ? (prod[f]||0)/kgProd : null, v = kgV ? (vend[f]||0)/kgV : null; return `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[Core.famClase(f)]})"></i>${esc(famNombre(f))}</td><td class="n">${fPct(p)}</td><td class="n">${fPct(v)}</td><td>${p!=null&&v!=null?`<span class="pill ${Math.abs(v-p)<0.03?'n':'w'}">${fPP(v-p)}</span>`:'—'}</td></tr>`; }).join('')}
+  </tbody></table></div></section></div>`;
+  $('#view').innerHTML = h;
+  if (kgProd && kgV) { const o = withTip(baseOpts(), c => ' ' + c.dataset.label + ': ' + nf1.format(c.raw) + '%'); o.indexAxis = 'y'; const x = o.scales.x; o.scales.x = { ...o.scales.y, ticks:{ ...o.scales.y.ticks, callback:v=>v+'%' } }; o.scales.y = x;
+    chart('cMix', { type:'bar', data:{ labels: fams.map(famNombre), datasets:[
+      { label:'Producido', data: fams.map(f => +((prod[f]||0)/kgProd*100).toFixed(1)), backgroundColor:cssv('--s1'), borderRadius:{ topRight:4, bottomRight:4 }, maxBarThickness:14 },
+      { label:'Vendido', data: fams.map(f => +((vend[f]||0)/kgV*100).toFixed(1)), backgroundColor:cssv('--s2'), borderRadius:{ topRight:4, bottomRight:4 }, maxBarThickness:14 } ] }, options:o }); }
+}
+
+/* ---------- Carga ---------- */
+function vCarga(){
+  const cov = (rows, tf, fa, fb) => TIENDAS.map(t => { const r = rows.filter(x=>tf(x)===t); return r.length ? { t, n:r.length, a:r.reduce((m,x)=>fa(x)<m?fa(x):m,'9'), b:r.reduce((m,x)=>fb(x)>m?fb(x):m,'') } : null; }).filter(Boolean);
+  const cv = cov(S.ventas, x=>x.t, x=>x.f, x=>x.f), ca = cov(S.ajustes, x=>x.t, x=>x.desde, x=>x.hasta);
+  const covT = (rows, lbl) => `<table><thead><tr><th>Tienda</th><th class="n">${lbl}</th><th>Desde</th><th>Hasta</th></tr></thead><tbody>${rows.map(c=>`<tr><td>${esc(titulo(c.t))}</td><td class="n">${nf0.format(c.n)}</td><td class="num">${fFecha(c.a)}</td><td class="num">${fFecha(c.b)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Sin registros</td></tr>'}</tbody></table>`;
+  const en = estadoNube(), cfg = Cloud.cfg || Cloud.draft || { url:'', key:'' };
+  let h = `<section class="sec"><div class="sec-h"><h2>Guardado en Supabase</h2><p><span class="chip st-${en.cls}"><i class="dotst"></i>${en.txt}</span></p></div>
+   <div class="glass pad" style="display:flex;flex-direction:column;gap:12px">
+    ${Cloud.error?`<div class="note warn" style="border-radius:9px">${esc(Cloud.error)}</div>`:''}
+    <div class="row" style="align-items:flex-end;gap:12px"><label class="flab" for="sbUrl">URL del proyecto<input class="mini wide" id="sbUrl" placeholder="https://xxxxxxxx.supabase.co" value="${esc(cfg.url)}" autocomplete="off"></label>
+    <label class="flab" for="sbKey">Clave publicable (anon)<input class="mini wide" id="sbKey" placeholder="sb_publishable_… o eyJ…" value="${esc(cfg.key)}" autocomplete="off"></label></div>
+    <div class="row"><button class="btn pri" id="sbOk">${Cloud.cfg?'Guardar y probar de nuevo':'Conectar y probar'}</button>${Cloud.cfg?`<button class="btn" id="sbSync">Reintentar y recargar desde Supabase</button><button class="btn" id="sbUp">Subir lo que hay en este navegador</button><button class="btn" id="sbOff">Desconectar este navegador</button>`:''}</div>
+    <p class="muted" style="margin:0;font-size:.8rem">Antes de conectar, corre una vez el archivo <b>supabase_tablero_res.sql</b> en el SQL Editor de tu proyecto. La URL y la clave publicable están en el panel del proyecto, en la sección de API. La clave se guarda solo en este navegador. Con Supabase conectado, nada se borra: quitar un acta la marca como anulada y los ajustes reemplazados quedan como historial. La conexión funciona en la versión publicada en Netlify; la vista previa del chat no permite conexiones externas.</p>
+   </div></section>
+  <section class="sec"><div class="glass drop" id="drop"><h3>Arrastra aquí los archivos del mes</h3><p class="muted" style="margin:0">Actas de desposte en PDF (Reporte de Producción), ventas y compras (VentasxDpto) y ajustes (Ajustes de Kardex) en Excel. Puedes soltar varios a la vez; el tipo se reconoce solo.</p>
+    <div class="row"><label class="btn pri" for="file">Elegir archivos</label><input id="file" type="file" multiple accept=".pdf,.xlsx,.xls,.csv" hidden></div>
+    <p class="muted" style="margin:0;font-size:.8rem">Nada se duplica: un acta repetida (tienda, documento y fecha) se reemplaza; las ventas se actualizan por tienda + código + día; los ajustes de una tienda se reemplazan cuando el nuevo rango se solapa con el anterior.</p></div>
+    ${S.log.length?`<div class="glass pad log">${S.log.map(l=>`<div><span class="pill ${l.ok?'g':'c'}">${l.ok?'Cargado':'Error'}</span><span>${l.msg}</span></div>`).join('')}</div>`:''}</section>
+  <section class="sec"><div class="sec-h"><h2>Actas de desposte</h2><p>${S.despostes.length} cargada(s)</p></div><div class="glass tw"><table><thead><tr><th>Fecha</th><th>Tienda</th><th>Doc.</th><th class="n">Kg canal</th><th>Archivo</th><th></th></tr></thead><tbody>
+  ${S.despostes.slice().sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(d=>`<tr><td class="num">${fFecha(d.fecha)}</td><td>${esc(titulo(d.tienda))}</td><td class="num">${esc(d.padres.map(p=>p.doc).join(', '))}</td><td class="n">${nf1.format(sum(d.padres,p=>p.kg))}</td><td class="muted" style="font-size:.8rem">${esc(d.fuente||'')}</td><td>${S.confirm===d.id?`<button class="btn dng" data-delok="${esc(d.id)}">Confirmar</button>`:`<button class="btn" data-del="${esc(d.id)}">Quitar</button>`}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">Sin actas</td></tr>'}
+  </tbody></table></div></section>
+  <div class="grid2"><section class="sec"><div class="sec-h"><h2>Ventas y compras</h2><p>${nf0.format(S.ventas.length)} registros diarios</p></div><div class="glass tw">${covT(cv,'Registros')}</div></section>
+  <section class="sec"><div class="sec-h"><h2>Ajustes de Kardex</h2><p>${nf0.format(S.ajustes.length)} movimientos</p></div><div class="glass tw">${covT(ca,'Movimientos')}</div></section></div>
+  ${Cloud.cfg ? '' : `<section class="sec"><div class="sec-h"><h2>Datos de este navegador</h2><p>Sin Supabase, los datos viven solo aquí. Datos iniciales: archivos del ${esc(fFecha(SEED.fecha))}.</p></div><div class="row">
+   ${S.confirm==='__reset'?`<button class="btn dng" id="resetOk">Sí, volver a los datos iniciales</button><button class="btn" id="cancel">Cancelar</button>`:`<button class="btn" id="reset">Volver a los datos iniciales</button>`}
+   ${S.confirm==='__wipe'?`<button class="btn dng" id="wipeOk">Sí, borrar todo</button><button class="btn" id="cancel2">Cancelar</button>`:`<button class="btn dng" id="wipe">Borrar todos los datos</button>`}</div></section>`}`;
+  $('#view').innerHTML = h;
+  const drop = $('#drop');
+  ['dragenter','dragover'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('on'); }));
+  ['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('on'); }));
+  drop.addEventListener('drop', ev => ingest([...ev.dataTransfer.files]));
+  $('#file').onchange = ev => ingest([...ev.target.files]);
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { S.confirm = b.dataset.del; vCarga(); });
+  document.querySelectorAll('[data-delok]').forEach(b => b.onclick = async () => { const id = b.dataset.delok; S.despostes = S.despostes.filter(d=>d.id!==id); S.confirm=null; dirty(); await save(); await nube({ k:'anular', id }); fillFilters(); render(); });
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
+  on('sbOk', conectarNube);
+  on('sbSync', async () => { await cargarNube(); fillFilters(); render(); });
+  on('sbUp', async () => { try { Cloud.estado='conectando'; pintarEstado(); await subirTodo(); S.log.unshift({ ok:true, msg:'Subí a Supabase todo lo que había en este navegador (actas, ventas, ajustes y configuración). Lo que ya existía no se duplicó.' }); await cargarNube(); } catch(e) { Cloud.estado='error'; Cloud.error=e.message; } fillFilters(); render(); });
+  on('sbOff', () => { try { localStorage.removeItem('tablero-res-sb'); } catch(e){} Cloud.cfg = null; Cloud.estado = 'local'; Cloud.error = ''; fillFilters(); render(); });
+  on('reset', () => { S.confirm='__reset'; vCarga(); }); on('wipe', () => { S.confirm='__wipe'; vCarga(); });
+  on('cancel', () => { S.confirm=null; vCarga(); }); on('cancel2', () => { S.confirm=null; vCarga(); });
+  on('resetOk', async () => { seedState(); S.ov={}; S.ovMot={}; S.est={}; S.confirm=null; S.log=[{ok:true,msg:'Datos iniciales restaurados.'}]; dirty(); await save(); fillFilters(); render(); });
+  on('wipeOk', async () => { S.despostes=[]; S.ventas=[]; S.ajustes=[]; S.confirm=null; S.log=[{ok:true,msg:'Se borraron actas, ventas y ajustes.'}]; dirty(); await save(); fillFilters(); render(); });
+}
+async function conectarNube(){
+  const url = limpiaUrl($('#sbUrl').value), key = $('#sbKey').value.trim(); Cloud.draft = { url, key };
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(url)) { Cloud.error = 'La URL debe verse como https://xxxxxxxx.supabase.co'; return vCarga(); }
+  if (key.length < 20) { Cloud.error = 'Pega la clave publicable completa (empieza con sb_publishable_ o con eyJ).'; return vCarga(); }
+  const prev = Cloud.cfg; Cloud.cfg = { url, key }; Cloud.estado = 'conectando'; pintarEstado();
+  try {
+    await Cloud.req('res_config?select=clave&limit=1');
+    const [d1, v1, a1] = await Promise.all([Cloud.req('res_despostes?select=id&limit=1'), Cloud.req('res_ventas?select=tienda&limit=1'), Cloud.req('res_ajustes?select=id&limit=1')]);
+    try { localStorage.setItem('tablero-res-sb', JSON.stringify(Cloud.cfg)); } catch(e){}
+    if (!d1.length && !v1.length && !a1.length && (S.despostes.length || S.ventas.length || S.ajustes.length)) { await subirTodo(); S.log.unshift({ ok:true, msg:'Supabase estaba vacío: subí lo que había en este navegador.' }); }
+    await cargarNube(); if (Cloud.estado === 'ok') S.log.unshift({ ok:true, msg:`Conectado a Supabase · ${S.despostes.length} acta(s), ${nf0.format(S.ventas.length)} ventas y ${nf0.format(S.ajustes.length)} ajustes leídos.` });
+  } catch(e) { Cloud.cfg = prev; Cloud.estado = prev ? 'error' : 'local'; Cloud.error = e.message; }
+  fillFilters(); render();
+}
+let pdfReady = null;
+function loadScript(src){ return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar el lector de PDF. Revisa la conexión e intenta de nuevo.')); document.head.appendChild(s); }); }
+function ensurePdf(){ return pdfReady ||= (async () => { const base = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/'; await loadScript(base+'pdf.min.js'); await loadScript(base+'pdf.worker.min.js'); window.pdfjsLib.GlobalWorkerOptions.workerSrc = base+'pdf.worker.min.js'; })().catch(e => { pdfReady = null; throw e; }); }
+async function leerPDF(file){
+  await ensurePdf(); const doc = await window.pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise; const items = [];
+  for (let p = 1; p <= doc.numPages; p++) { const tc = await (await doc.getPage(p)).getTextContent(); tc.items.forEach(i => items.push({ p, x:i.transform[4], y:i.transform[5], w:i.width, s:i.str })); }
+  return Core.parseDesposte(items, file.name);
+}
+function dirty(){ precioCache.clear(); REFc = null; }
+function nubeLog(r, n){ if (r == null) return; const suf = r ? ' · <b>guardado en Supabase</b>' : ' · <b>sin subir a Supabase</b>: queda en cola y se reintenta'; for (let i = 0; i < n && S.log[i]; i++) S.log[i].msg += suf; }
+async function ingest(files){
+  for (const f of files) {
+    try {
+      if (/\.pdf$/i.test(f.name)) {
+        const ds = await leerPDF(f); if (!ds.length) throw new Error('no encontré un Reporte de Producción en el PDF');
+        ds.forEach(d => { const i = S.despostes.findIndex(x=>x.id===d.id); if (i>=0) S.despostes[i] = d; else S.despostes.push(d);
+          const k = Core.kpiDesposte(d, {}); S.log.unshift({ ok:true, msg:`<b>${esc(f.name)}</b> · acta ${esc(titulo(d.tienda))} ${fFecha(d.fecha)} · <span class="num">${fKg(k.kgPadre)}</span> · rend. <span class="num">${fPct(k.rendVend)}</span> · ${i>=0?'reemplazada':'nueva'}${d.avisos.length?` · <b>avisos:</b> ${esc(d.avisos.join('; '))}`:''}` }); });
+        nubeLog(await nube({ k:'desp', rows:ds }), ds.length); nube({ k:'log', row:{ archivo:f.name, tipo:'DESPOSTE', detalle:ds.map(d=>d.id).join(', '), filas:ds.length } });
+      } else {
+        const wb = XLSX.read(await f.arrayBuffer(), { cellDates:true }); const aoa = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1, raw:true });
+        const tipo = Core.tipoExcel(aoa);
+        if (tipo === 'AJUSTES') {
+          const rows = Core.parseAjustes(aoa); if (!rows.length) throw new Error('el reporte no trae movimientos');
+          const ts = new Set(rows.map(r=>r.t)); const { desde, hasta } = rows[0]; const antes = S.ajustes.length;
+          S.ajustes = S.ajustes.filter(r => !(ts.has(r.t) && r.desde <= hasta && r.hasta >= desde)); const quit = antes - S.ajustes.length;
+          S.ajustes.push(...rows);
+          S.log.unshift({ ok:true, msg:`<b>${esc(f.name)}</b> · ajustes de Kardex ${fFecha(desde)} al ${fFecha(hasta)} · ${nf0.format(rows.length)} movimientos · ${ts.size} tienda(s)${quit?` · reemplazó ${nf0.format(quit)} movimientos del rango anterior`:''}` });
+          nubeLog(await nube({ k:'aj', desde, hasta, archivo:f.name, filas:rows.map(filaAj) }), 1); nube({ k:'log', row:{ archivo:f.name, tipo:'AJUSTES', detalle:`${desde} a ${hasta}`, filas:rows.length } });
+        } else if (tipo === 'VENTAS') {
+          const rows = Core.parseVentas(aoa); if (!rows.length) throw new Error('el archivo no trae filas de venta');
+          const key = r => r.t+'|'+r.c+'|'+r.f; const m = new Map(S.ventas.map(r=>[key(r), r])); let nuevos = 0, act = 0;
+          rows.forEach(r => { if (m.has(key(r))) act++; else nuevos++; m.set(key(r), r); }); S.ventas = [...m.values()];
+          const tt = [...new Set(rows.map(r=>r.t))]; const fa = rows.reduce((x,r)=>r.f<x?r.f:x,'9'), fb = rows.reduce((x,r)=>r.f>x?r.f:x,'');
+          S.log.unshift({ ok:true, msg:`<b>${esc(f.name)}</b> · ventas y compras · ${nf0.format(rows.length)} filas · ${tt.length} tienda(s) · ${fFecha(fa)} al ${fFecha(fb)} · ${nuevos} nuevas, ${act} actualizadas` });
+          nubeLog(await nube({ k:'ven', rows }), 1); nube({ k:'log', row:{ archivo:f.name, tipo:'VENTAS', detalle:`${fa} a ${fb}`, filas:rows.length } });
+        } else throw new Error('no reconozco el Excel: espero VentasxDpto (Tienda, Codigo, Cant. Venta) o Ajustes de Kardex (Motivo, Tienda, Cant.)');
+      }
+    } catch (e) { S.log.unshift({ ok:false, msg:`<b>${esc(f.name)}</b> · ${esc(e.message)}` }); }
+  }
+  dirty(); await save(); fillFilters(); render();
+}
+
+/* ---------- Catálogo ---------- */
+function vCatalogo(){
+  const arts = new Map();
+  S.ventas.forEach(r => { if (!arts.has(r.c)) arts.set(r.c, { c:r.c, a:r.a, sub:'' }); });
+  S.ajustes.forEach(r => { const x = arts.get(r.c); if (!x) arts.set(r.c, { c:r.c, a:r.a, sub:r.sub }); else if (!x.sub) x.sub = r.sub; });
+  const lista = [...arts.values()].sort((x,y)=>x.c.localeCompare(y.c));
+  const dnames = [...new Set(S.despostes.flatMap(d=>d.hijos.map(h=>norm(h.art))))].sort();
+  const opts = (sel, padre) => `<option value="">Regla automática</option>${padre?`<option value="PADRE"${sel==='PADRE'?' selected':''}>Padre (materia prima)</option>`:''}${FAMILIAS.map(f=>`<option value="${f.id}"${sel===f.id?' selected':''}>${esc(f.nombre)}</option>`).join('')}<option value="EXCLUIR"${sel==='EXCLUIR'?' selected':''}>Excluir del análisis</option>`;
+  const padres = [...new Set(S.despostes.map(padreD))];
+  const motivos = [...new Set(S.ajustes.map(r=>r.mot))].sort();
+  let h = `<section class="sec"><div class="sec-h"><h2>Fórmulas de negocio</h2><p>Cómo se calcula cada indicador</p></div><div class="glass pad fgrid">
+   <div><h3>% rendimiento por corte</h3><div class="formula">Rend_i = kg_i / kg_padre × 100</div><p>kg_padre = suma de "Productos a utilizar" del acta.</p></div>
+   <div><h3>Rendimiento del acta y merma técnica</h3><div class="formula">Rend_acta = Σ kg vendibles / kg_padre
+t = kg de merma, grasa y cortes sin precio / kg_padre</div><p>Cuadre: kg_padre − Σ hijos = 0.</p></div>
+   <div><h3>Merma operativa (Kardex)</h3><div class="formula">K = −Σ kg netos de motivos de merma (familias de canal)
+o = K / (kg vendidos de canal + K)</div><p>Parte del producto ya despostado que se pierde antes de llegar a caja.</p></div>
+   <div><h3>Merma total y rendimiento neto</h3><div class="formula">Rend_neto   = (1 − t) × (1 − o)
+Merma_total = 1 − Rend_neto = t + (1 − t) × o</div><p>Se combinan tasas porque actas y Kardex no cubren los mismos kilos.</p></div>
+   <div><h3>Costo por valor relativo de venta (VRV)</h3><div class="formula">f = Costo_padre / Σ (kg_j × PMVP_j)
+Costo_i $/kg = PMVP_i × f
+Margen PMVP = 1 − f   (igual en todos los cortes)</div><p>Es el método del ERP (acta Pirineos: 22,9 % uniforme).</p></div>
+   <div><h3>Utilidad por grupo</h3><div class="formula">Utilidad_g = Σ kg_i × (Precio_i − Costo_i)
+Precio = PMVP del acta o venta $/kg de la familia (tienda, mes)</div><p>Margen = Utilidad / Venta.</p></div>
+   <div><h3>Utilidad y margen bruto en caja</h3><div class="formula">Utilidad = Subtotal venta − Costo venta (ERP)
+Margen %  = Utilidad / Subtotal venta</div><p>Coincide con la columna Margen del VentasxDpto.</p></div>
+   <div><h3>Realización</h3><div class="formula">Disponible = Kg comprados × Rend_acta − K − Consumo ± Transf.
+Realización = Kg vendidos de canal / Disponible</div><p>Unidades a kg con el peso del nombre (croqueta 400 g = 0,4 kg).</p></div>
+  </div></section>`;
+  h += `<div class="grid2"><section class="sec"><div class="sec-h"><h2>Motivos de ajuste de Kardex</h2><p>Define qué entra en la merma</p></div><div class="glass tw"><table><thead><tr><th>Motivo</th><th>Tratamiento</th></tr></thead><tbody>
+   ${motivos.map(m => { const cl = Core.motivoClase(m, S.ovMot); return `<tr><td>${esc(m)}</td><td><select class="mini" id="mot-${esc(norm(m).replace(/\W/g,'_'))}" data-mot="${esc(norm(m))}">${Object.entries(MOTIVO_CLASES).map(([k,v])=>`<option value="${k}"${cl===k?' selected':''}>${v.nombre}${v.merma?' (cuenta como merma)':''}</option>`).join('')}</select></td></tr>`; }).join('')||'<tr><td colspan="2" class="muted">Sin ajustes cargados</td></tr>'}
+  </tbody></table></div></section>
+  <section class="sec"><div class="sec-h"><h2>Estándar teórico de rendimiento</h2><p>% sobre kg de padre · vacío = promedio de todas las actas</p></div><div class="glass tw"><table><thead><tr><th>Familia</th>${padres.map(p=>`<th class="n">${esc((Core.PADRES.find(x=>x.id===p)||{nombre:p}).nombre)}</th>`).join('')}</tr></thead><tbody>
+   ${FAMILIAS.filter(f => f.canal).map(f => `<tr><td><i class="dot" style="background:var(${CLASE_COLOR[f.clase]})"></i>${esc(f.nombre)}</td>${padres.map(p => { const e = estandar(p).fams[f.id]; const man = S.est[p]?.[f.id]; return `<td class="n"><input class="mini" id="est-${p}-${f.id}" data-p="${p}" data-f="${f.id}" inputmode="decimal" value="${man??''}" placeholder="${e&&e.src==='hist'?nf2.format(e.pct*100):''}" aria-label="Estándar ${esc(f.nombre)}"></td>`; }).join('')}</tr>`).join('')}
+  </tbody></table></div></section></div>`;
+  h += `<div class="grid2"><section class="sec"><div class="sec-h"><h2>Artículos de venta, compra y ajustes</h2><p>${lista.length} códigos · la regla asigna por nombre y subgrupo</p></div><div class="glass tw"><table><thead><tr><th>Código</th><th>Artículo</th><th>Asignación</th><th>Origen</th></tr></thead><tbody>
+   ${lista.map(x => { const k = Core.clasificarArticulo(x, S.ov); const lbl = k.rol==='PADRE'?'Padre':k.rol==='EXCLUIDO'?'Excluido':famNombre(k.fam); return `<tr><td class="num">${esc(x.c)}</td><td>${esc(x.a)}</td><td><select class="mini" id="ov-${esc(x.c)}" data-ov="${esc(x.c)}">${opts(S.ov[x.c]||'', true)}</select></td><td>${k.origen==='manual'?'<span class="pill n">manual</span>':k.rol==='SIN_MAPEO'?'<span class="pill c">pendiente</span>':`<span class="muted" style="font-size:.8rem">${esc(lbl)}</span>`}</td></tr>`; }).join('')}
+   </tbody></table></div></section>
+   <section class="sec"><div class="sec-h"><h2>Cortes del acta de desposte</h2><p>El PDF no trae código: se asigna por nombre</p></div><div class="glass tw"><table><thead><tr><th>Producto terminado</th><th>Asignación</th><th>Por regla</th></tr></thead><tbody>
+   ${dnames.map(n => `<tr><td>${esc(n)}</td><td><select class="mini" id="ovd-${esc(n.replace(/\W/g,'_'))}" data-ovd="${esc(n)}">${opts(S.ov['D:'+n]||'', false)}</select></td><td class="muted" style="font-size:.8rem">${esc(famNombre(Core.familiaPorRegla(n)))}</td></tr>`).join('')}
+   </tbody></table></div>
+   <div class="glass note"><span><b>Grupos:</b> siguen el SubGrupo del ERP. Especiales = lomito, solomo, punta, lomo de aguja y pollo de res. Primera = primera, bistec, pulpa negra, muchacho, ganso y mechar. Segunda = segunda, lagarto, molida y guisar. Tercera = costilla, asado de tira, osobuco y hueso. Los cortes Disprocar y las vísceras no salen del desposte de canal y quedan fuera del rendimiento.</span><span><b>Supuesto a validar:</b> pollo de res va en Especiales.</span></div></section></div>`;
+  $('#view').innerHTML = h;
+  document.querySelectorAll('[data-ov]').forEach(s => s.onchange = async () => { if (s.value) S.ov[s.dataset.ov] = s.value; else delete S.ov[s.dataset.ov]; dirty(); await save(); nube({ k:'cfg' }); vCatalogo(); });
+  document.querySelectorAll('[data-ovd]').forEach(s => s.onchange = async () => { const k = 'D:'+s.dataset.ovd; if (s.value) S.ov[k] = s.value; else delete S.ov[k]; dirty(); await save(); nube({ k:'cfg' }); vCatalogo(); });
+  document.querySelectorAll('[data-mot]').forEach(s => s.onchange = async () => { S.ovMot[s.dataset.mot] = s.value; dirty(); await save(); nube({ k:'cfg' }); });
+  document.querySelectorAll('input[data-p]').forEach(i => i.onchange = async () => { const v = i.value.replace(',', '.').trim(); S.est[i.dataset.p] ||= {}; if (v === '' || isNaN(+v)) delete S.est[i.dataset.p][i.dataset.f]; else S.est[i.dataset.p][i.dataset.f] = +v; await save(); nube({ k:'cfg' }); });
+}
+
+/* ---------- Marco ---------- */
+function fillFilters(){
+  const ts = TIENDAS.filter(t => S.ventas.some(r=>r.t===t) || S.despostes.some(d=>d.tienda===t) || S.ajustes.some(r=>r.t===t));
+  const ms = [...new Set(S.ventas.map(r=>mesDe(r.f)).concat(S.despostes.map(d=>mesDe(d.fecha)), S.ajustes.map(r=>mesDe(r.hasta))))].filter(Boolean).sort().reverse();
+  if (S.tienda !== '*' && !ts.includes(S.tienda)) S.tienda = '*';
+  if (S.mes !== '*' && !ms.includes(S.mes)) S.mes = '*';
+  $('#fTienda').innerHTML = `<option value="*">Consolidado cadena</option>` + ts.map(t=>`<option value="${esc(t)}">${esc(titulo(t))}</option>`).join('');
+  $('#fMes').innerHTML = `<option value="*">Todo lo cargado</option>` + ms.map(m=>`<option value="${m}">${fMes(m)}</option>`).join('');
+  $('#fTienda').value = S.tienda; $('#fMes').value = S.mes;
+  const fb = S.ventas.reduce((m,r)=>r.f>m?r.f:m,'');
+  $('#stamp').innerHTML = `Ventas al <b>${fFecha(fb)}</b> · <b>${S.despostes.length}</b> acta(s) · <b>${nf0.format(S.ajustes.length)}</b> ajustes`;
+  pintarEstado();
+}
+function render(){
+  $('#tabs').innerHTML = VIEWS.map(([k,l]) => `<button class="tab" role="tab" id="tab-${k}" aria-selected="${S.tab===k}" data-k="${k}">${l}</button>`).join('');
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => { S.tab = b.dataset.k; S.confirm = null; saveUI(); render(); });
+  redraw(({ panel:vPanel, canal:vCanal, despostes:vDespostes, mensual:vMensual, kardex:vKardex, cruce:vCruce, carga:vCarga, catalogo:vCatalogo }[S.tab] || vPanel));
+}
+$('#fTienda').onchange = e => { S.tienda = e.target.value; if (S.tienda !== '*' && S.despostes.some(d=>d.tienda===S.tienda)) S.canal = S.tienda; render(); };
+$('#fMes').onchange = e => { S.mes = e.target.value; render(); };
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => render()); } catch(e){}
+new MutationObserver(() => render()).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+(async () => { Cloud.init(); seedState(); fillFilters(); render(); await load(); Cloud.pend = (await DB.get('pend')) || []; dirty(); fillFilters(); render();
+  if (Cloud.cfg) { await cargarNube(); fillFilters(); render(); } })();
+})();
+</script>
