@@ -1,0 +1,16 @@
+{
+  "name": "Tablero Carne de Res · Grupo Garzón",
+  "short_name": "Carne de Res",
+  "description": "Desposte, rendimiento, merma y margen de carne de res por tienda.",
+  "lang": "es-VE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E8EFEE",
+  "theme_color": "#13294B",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
