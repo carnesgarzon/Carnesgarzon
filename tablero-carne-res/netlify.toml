@@ -1,3 +1,0 @@
-# Netlify publica la raíz del repositorio tal cual (no hay paso de compilación).
-[build]
-  publish = "."
