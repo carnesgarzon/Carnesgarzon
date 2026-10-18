@@ -1,0 +1,17 @@
+# Netlify publica la raíz del repositorio tal cual (no hay paso de compilación).
+[build]
+  publish = "."
+
+# El service worker y la página no se guardan en caché del navegador: así cada deploy se ve al instante.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
